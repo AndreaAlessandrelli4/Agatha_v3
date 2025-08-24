@@ -1,32 +1,35 @@
 import asyncio
 import io
-import os
 import numpy as np
 import soundfile as sf
 import streamlit as st
 from openai import AsyncOpenAI
+import os
 
+# Prende la chiave API dalle secrets di Streamlit
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 SAMPLERATE = 24000
 CHANNELS = 1
 
 
-async def speak_stream_text(text):
-    """Genera audio TTS e riproduce su Streamlit"""
+async def speak_stream_text(text: str):
+    """Genera audio TTS da testo e lo riproduce in Streamlit."""
     leftover = b""
 
     async with client.audio.speech.with_streaming_response.create(
         model="gpt-4o-mini-tts",
         voice="shimmer",
         input=text,
-        response_format="pcm"
+        response_format="pcm",
     ) as response:
 
+        # Scrive in memoria come WAV
         audio_buffer = io.BytesIO()
         with sf.SoundFile(
             audio_buffer, mode="w",
-            samplerate=SAMPLERATE, channels=CHANNELS, subtype="PCM_16"
+            samplerate=SAMPLERATE, channels=CHANNELS,
+            subtype="PCM_16", format="WAV"
         ) as f:
             async for chunk in response.iter_bytes():
                 chunk = leftover + chunk
@@ -40,23 +43,23 @@ async def speak_stream_text(text):
         st.audio(audio_buffer, format="audio/wav")
 
 
-async def chat_and_speak(user_input):
-    """Chat con streaming testuale e output TTS"""
+async def chat_and_speak(user_input: str):
+    """Usa GPT per generare risposta e leggerla con TTS."""
     full_text = ""
 
     stream = await client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": user_input}],
-        stream=True
+        stream=True,
     )
 
-    placeholder = st.empty()
     async for event in stream:
         delta = event.choices[0].delta
         if delta.content:
             token = delta.content
             full_text += token
-            placeholder.markdown(full_text)  # aggiorna live il testo
+            # Mostra testo man mano
+            st.write(token)
 
-    # parla alla fine
+    # Dopo che la risposta è completa → la legge
     await speak_stream_text(full_text.strip())

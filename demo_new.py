@@ -90,7 +90,7 @@ if st.session_state.demo_started == False:
 else:
     log, _,  tit_col_log,res_col=st.columns([0.5,0.2, 4, 2])
     with log:
-        st.image("/Users/andreaalessandrelli/Downloads/Agata/fraud_ai_project/logo.png", use_container_width="always")
+        st.image("logo.png", use_container_width="always")
     with tit_col_log:
         st.markdown("<br><span class='Title'>Agatha control dashboard</span>", unsafe_allow_html=True)
 
@@ -387,5 +387,6 @@ else:
                 if st.button("Next Alert", icon = "➡️"):
                     st.session_state.alert_index = min(len(alerts)-1, st.session_state.alert_index + 1)
                     st.experimental_rerun()
+
 
 

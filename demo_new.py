@@ -55,7 +55,7 @@ if st.session_state.demo_started == False:
     
 
     st.markdown("<br><span class='subTitle'>Enter your Name to personalize the demo</span>", unsafe_allow_html=True)
-    openai_input = os.('OPEN-AI-KEY')
+    openai_input = os.getenv('OPEN-AI-KEY')
     na, surna = st.columns([1,1])
     with na:
         name_input = st.text_input("Your Name", type="default", placeholder="Enter your name (default John)")
@@ -386,3 +386,4 @@ else:
                 if st.button("Next Alert", icon = "➡️"):
                     st.session_state.alert_index = min(len(alerts)-1, st.session_state.alert_index + 1)
                     st.experimental_rerun()
+

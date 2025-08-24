@@ -1,0 +1,17 @@
+streamlit
+python-dotenv
+streamlit-aggrid
+pandas
+numpy
+webrtcvad
+av
+soundfile
+sounddevice
+streamlit-webrtc
+streamlit-autorefresh
+openai
+elevenlabs
+setuptools
+sqlalchemy
+nltk
+aiohttp
